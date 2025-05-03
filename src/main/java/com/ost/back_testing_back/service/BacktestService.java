@@ -3,9 +3,11 @@ package com.ost.back_testing_back.service;
 import com.ost.back_testing_back.dto.BacktestDto;
 import com.ost.back_testing_back.entity.BacktestReq;
 import com.ost.back_testing_back.entity.BacktestRes;
+import com.ost.back_testing_back.exception.NoDataFoundException;
 import com.ost.back_testing_back.repository.BacktestReqRepository;
 import com.ost.back_testing_back.repository.BacktestResRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +21,26 @@ public class BacktestService {
     private final BacktestResRepository backtestResRepository;
     private final WebClient webClient;
 
+    // 백테스트 요청을 처리하는 메서드
+    @Transactional
     public void processBacktest(BacktestDto.CreateBacktestRequest requestDto) {
         try {
-            BacktestDto.CreateBacktestResponse success = runBacktestLogic(requestDto);
-//            String status = success ? "SUCCESS" : "FAILED";
-            String status = "SUCCESS";
-            BacktestReq req = saveBacktestRequest(requestDto, status);
-            saveBacktestResult(req, success.totalReturn());
+            BacktestDto.CreateBacktestResponse result = runBacktestLogic(requestDto);
+
+            if (result == null) {
+                throw new NoDataFoundException("No data found for ticker: " + requestDto.ticker());
+            }
+
+            BacktestReq req = saveBacktestRequest(requestDto, "SUCCESS");
+            saveBacktestResult(req, result.totalReturn());
 
         } catch (Exception e) {
-            // 실패 시 예외 처리
+            System.err.println("[백테스트 실패] " + e.getMessage());
+            saveBacktestRequest(requestDto, "FAILED");
         }
     }
 
+    // 백테스트 요청을 저장하는 메서드
     private BacktestReq saveBacktestRequest(BacktestDto.CreateBacktestRequest requestDto, String status) {
         return backtestReqRepository.save(
                 BacktestReq.builder()
@@ -44,6 +53,7 @@ public class BacktestService {
         );
     }
 
+    // 백테스트 결과를 저장하는 메서드
     private void saveBacktestResult(BacktestReq req, double totalReturn) {
         backtestResRepository.save(
                 BacktestRes.builder()
@@ -53,6 +63,7 @@ public class BacktestService {
         );
     }
 
+    // 백테스트 로직을 실행하는 메서드
     private BacktestDto.CreateBacktestResponse runBacktestLogic(BacktestDto.CreateBacktestRequest requestDto) {
         return webClient.post()
                 .uri("/api/backtest") // 추후 수정

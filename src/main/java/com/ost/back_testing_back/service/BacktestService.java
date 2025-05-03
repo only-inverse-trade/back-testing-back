@@ -37,6 +37,7 @@ public class BacktestService {
         } catch (Exception e) {
             System.err.println("[백테스트 실패] " + e.getMessage());
             saveBacktestRequest(requestDto, "FAILED");
+            throw new RuntimeException("ML 서버 통신 실패", e);
         }
     }
 

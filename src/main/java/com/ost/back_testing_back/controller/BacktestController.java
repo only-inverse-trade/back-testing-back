@@ -32,7 +32,7 @@ public class BacktestController {
         } catch (NoDataFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Unexpected server error"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Message", "Backtest request created successfully"));
     }

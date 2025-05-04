@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://54.180.127.214:5432/backtest
+    url: jdbc:postgresql://localhost:5432/backtest
     username: neil
     password:
   jpa:

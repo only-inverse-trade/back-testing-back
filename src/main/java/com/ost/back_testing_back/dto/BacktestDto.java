@@ -1,6 +1,8 @@
 package com.ost.back_testing_back.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BacktestDto {
 
     public record CreateBacktestRequest(
@@ -11,7 +13,7 @@ public class BacktestDto {
     ) {
     }
     public record CreateBacktestResponse(
+            @JsonProperty("total_return")
             Double totalReturn
-    ) {
-    }
+    ) {}
 }

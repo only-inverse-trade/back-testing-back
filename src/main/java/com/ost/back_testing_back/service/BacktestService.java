@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class BacktestService {
     // 백테스트 요청을 처리하는 메서드
     @Transactional
     public void processBacktest(BacktestDto.CreateBacktestRequest requestDto) {
+        System.out.println("[백테스트 요청] " + requestDto);
         try {
             BacktestDto.CreateBacktestResponse result = runBacktestLogic(requestDto);
 
@@ -48,7 +50,7 @@ public class BacktestService {
                         .ticker(requestDto.ticker())
                         .startDate(LocalDate.parse(requestDto.startDate()))
                         .endDate(LocalDate.parse(requestDto.endDate()))
-                        .strategy(requestDto.strategy())
+                        .strategy(Optional.ofNullable(requestDto.strategy()).orElse(""))
                         .status(status)
                         .build()
         );
@@ -62,15 +64,16 @@ public class BacktestService {
                         .totalReturn(totalReturn)
                         .build()
         );
-    }
+    }    // 백테스트 로직을 실행하는 메서드
 
-    // 백테스트 로직을 실행하는 메서드
     private BacktestDto.CreateBacktestResponse runBacktestLogic(BacktestDto.CreateBacktestRequest requestDto) {
         return webClient.post()
-                .uri("/api/backtest") // 추후 수정
+                .uri("https://98bc-14-52-68-215.ngrok-free.app/backtest") // 추후 수정
                 .bodyValue(requestDto)
                 .retrieve()
                 .bodyToMono(BacktestDto.CreateBacktestResponse.class)
                 .block(); // 결과 기다림
     }
+
+
 }

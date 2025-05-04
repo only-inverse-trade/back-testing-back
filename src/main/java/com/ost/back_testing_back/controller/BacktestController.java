@@ -23,9 +23,10 @@ public class BacktestController {
     public ResponseEntity<?> createBacktest(
             @RequestBody BacktestDto.CreateBacktestRequest request
     ) {
-        // ticker 가 없으면 400 에러
-        if (request.ticker() == null || request.ticker().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Ticker is required"));
+        // ticker, startDate, endDate 가 없으면 400 에러
+        if (request.ticker() == null || request.ticker().isEmpty()
+            || request.startDate() == null || request.endDate() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Ticker, startDate, and endDate are required"));
         }
         try {
             backtestService.processBacktest(request);

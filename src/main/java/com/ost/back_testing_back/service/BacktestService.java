@@ -70,7 +70,7 @@ public class BacktestService {
 
     private BacktestDto.CreateBacktestResponse runBacktestLogic(BacktestDto.CreateBacktestRequest requestDto) {
         return webClient.post()
-                .uri("https://2d83-115-138-25-15.ngrok-free.app/backtest") // 추후 수정
+                .uri("https://f961-115-138-25-15.ngrok-free.app/backtest") // 추후 수정
                 .bodyValue(requestDto)
                 .retrieve()
                 .bodyToMono(BacktestDto.CreateBacktestResponse.class)

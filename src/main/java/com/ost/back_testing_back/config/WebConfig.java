@@ -15,7 +15,7 @@ public class WebConfig {
                 registry.addMapping("/api/**")
                         .allowedOrigins(
                                 "http://localhost:5173",
-                                "https://54.180.127.214:5173"  // ngrok 주소 추가
+                                "http://54.180.127.214:5173"
                         )
                         .allowedMethods("*")
                         .allowedHeaders("*");

@@ -24,7 +24,7 @@ public class BacktestService {
 
     // 백테스트 요청을 처리하는 메서드
     @Transactional
-    public void processBacktest(BacktestDto.CreateBacktestRequest requestDto) {
+    public double processBacktest(BacktestDto.CreateBacktestRequest requestDto) {
         System.out.println("[백테스트 요청] " + requestDto);
         try {
             BacktestDto.CreateBacktestResponse result = runBacktestLogic(requestDto);
@@ -35,6 +35,8 @@ public class BacktestService {
 
             BacktestReq req = saveBacktestRequest(requestDto, "SUCCESS");
             saveBacktestResult(req, result.totalReturn());
+
+            return result.totalReturn();
 
         } catch (Exception e) {
             System.err.println("[백테스트 실패] " + e.getMessage());
@@ -68,7 +70,7 @@ public class BacktestService {
 
     private BacktestDto.CreateBacktestResponse runBacktestLogic(BacktestDto.CreateBacktestRequest requestDto) {
         return webClient.post()
-                .uri("https://98bc-14-52-68-215.ngrok-free.app/backtest") // 추후 수정
+                .uri("https://2d83-115-138-25-15.ngrok-free.app/backtest") // 추후 수정
                 .bodyValue(requestDto)
                 .retrieve()
                 .bodyToMono(BacktestDto.CreateBacktestResponse.class)

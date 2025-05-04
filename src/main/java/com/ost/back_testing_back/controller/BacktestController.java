@@ -29,12 +29,15 @@ public class BacktestController {
             return ResponseEntity.badRequest().body(Map.of("error", "Ticker, startDate, and endDate are required"));
         }
         try {
-            backtestService.processBacktest(request);
+            Double totalReturn = backtestService.processBacktest(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "Backtest request created successfully",
+                "totalReturn", totalReturn
+            ));
         } catch (NoDataFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Message", "Backtest request created successfully"));
     }
 }
